@@ -18,8 +18,22 @@ export default defineNuxtModule<ModuleOptions>({
       a: 'foo'
     }
   }),
-  setup (options: ModuleOptions, nuxt) {
-    // 'nuxt.options.runtimeConfig.public.myModule' is of type 'unknown'.ts(18046)
-     nuxt.options.runtimeConfig.public.myModule.someComplexType = false
+  setup (options, nuxt) {
+    // Module options
+    options.someComplexType = false
+    
+    // Module runtime config
+     nuxt.options.runtimeConfig.public.myModule = {
+      myComplexType: false
+     }
   }
 })
+
+// Here's the augmentation that makes it work
+declare module '@nuxt/schema' {
+  interface PublicRuntimeConfig {
+    myModule: {
+      myComplexType: false | { a : string}
+    }
+  }
+}
